@@ -1,0 +1,28 @@
+====================
+7. Integer validator:
+====================
+
+Import module:
+    >>> BaseGeometry = __import__('7-base_geometry').BaseGeometry
+
+Class:
+=======.
+Write a class BaseGeometry, area method should raise an exception
+If value is not integer raise TypeError
+If value is <= 0, raise ValueError
+
+Operations:
+=========
+
+integer is negative:
+    >>> bg = BaseGeometry()
+    >>> bg.integer_validator("my_int", -4)
+    Traceback (most recent call last):
+    ValueError: my_int must be greater than 0
+
+value is not an integer:
+    >>> bg = BaseGeometry()
+    >>> bg.integer_validator("my_int", "hola")
+    Traceback (most recent call last):
+    TypeError: my_int must be an integer
+Footer
