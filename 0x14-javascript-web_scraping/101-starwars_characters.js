@@ -1,30 +1,46 @@
 #!/usr/bin/node
-const request = require('request');
-const url = 'http://swapi.co/api/films/';
-let id = parseInt(process.argv[2], 10);
-let characters = [];
+/*  script that prints all characters of a Star Wars movie.
+    with a given movie ID, this code presents callback hell issues
+    fixed by use of promise and wait.
+ */
 
-request(url, function (err, response, body) {
-  if (err == null) {
-    const resp = JSON.parse(body);
-    const results = resp.results;
-    if (id < 4) {
-      id += 3;
-    } else {
-      id -= 3;
-    }
-    for (let i = 0; i < results.length; i++) {
-      if (results[i].episode_id === id) {
-        characters = results[i].characters;
-        break;
+const args = process.argv;
+const url = 'https://swapi-api.hbtn.io/api/films/' + args[2];
+const request = require('request');
+
+function listAll (url) {
+  return new Promise(function (resolve, reject) {
+    request(url, function (error, res, body) {
+      if (res.statusCode === 200 && !error) {
+        resolve(body);
+        const data = JSON.parse(body);
+        const dataChar = data.characters;
+        return dataChar;
+      } else {
+        console.log(error);
       }
-    }
-    for (let j = 0; j < characters.length; j++) {
-      request(characters[j], function (err, response, body) {
-        if (err == null) {
-          console.log(JSON.parse(body).name);
-        }
-      });
-    }
+    });
+  });
+}
+function dataChar (url) {
+  return new Promise(function (resolve, reject) {
+    request(url, function (error, res, body) {
+      if (res.statusCode === 200 && !error) {
+        resolve(body);
+        const data = JSON.parse(body);
+        console.log(data.name);
+      } else {
+        reject(error);
+      }
+    });
+  });
+}
+async function iter () {
+  const fistRequest = await listAll(url);
+  const numChar = JSON.parse(fistRequest).characters.length;
+  for (let i = 0; i < numChar; i++) {
+    const urlCh = JSON.parse(fistRequest).characters[i];
+    await dataChar(urlCh);
   }
-});
+}
+iter();
